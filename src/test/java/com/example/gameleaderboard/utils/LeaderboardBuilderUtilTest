@@ -1,0 +1,56 @@
+package com.example.gameleaderboard.utils;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(SpringExtension.class)
+public class LeaderboardBuilderUtilTest {
+
+    @InjectMocks
+    LeaderboardBuilderUtil leaderboardBuilderUtil;
+
+    Map<Integer, Set<String>> scoreToPlayersMap;
+
+    LinkedList<Integer> topScores;
+
+    Set<Integer> scoresSet;
+
+    @BeforeEach
+    public void setup(){
+        scoreToPlayersMap = new HashMap();
+        topScores = new LinkedList();
+        scoresSet = new HashSet();
+        ReflectionTestUtils.setField(leaderboardBuilderUtil, "scoresSet", scoresSet);
+        ReflectionTestUtils.setField(leaderboardBuilderUtil, "topScores", topScores);
+        ReflectionTestUtils.setField(leaderboardBuilderUtil, "scoreToPlayersMap", scoreToPlayersMap);
+    }
+
+    @Test
+    public void buildTopScoresTest(){
+        scoresSet.addAll(Arrays.asList(50,22,40,65,100,28,33));
+        leaderboardBuilderUtil.buildTopScores();
+        assertEquals(100, topScores.getFirst());
+    }
+
+    @Test
+    public void buildTopScoresTest_equalSize(){
+        scoresSet.addAll(Arrays.asList(50,22,40));
+        topScores.addAll(Arrays.asList(3,2,1));
+        leaderboardBuilderUtil.buildTopScores();
+        assertEquals(3, topScores.getFirst());
+    }
+
+    @Test
+    public void buildTopScoresTest_emptySet(){
+        leaderboardBuilderUtil.buildTopScores();
+        assertEquals(0, topScores.size());
+    }
+}
