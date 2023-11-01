@@ -80,7 +80,7 @@ public class ScoreServiceTest {
         when(playerDetailsRestClient.getPlayerDetails(anyList())).thenReturn(playerDetailsDtoList);
         when(leaderboardBuilderUtil.getTopPlayerIds()).thenReturn(playerIdList);
         List<LeaderboardDto> expected = scoreService.getTopScores();
-        assertEquals(Optional.of(5), Optional.of(expected.size()));
+        assertEquals(5, expected.size());
 
     }
 }
