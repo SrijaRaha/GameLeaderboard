@@ -1,0 +1,75 @@
+package com.example.gameleaderboard.service;
+
+import com.example.gameleaderboard.dtos.PlayerDetailsDto;
+import com.example.gameleaderboard.service.implementation.PlayerServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@ExtendWith(SpringExtension.class)
+public class PlayerServiceTest {
+
+    @InjectMocks
+    PlayerServiceImpl playerService;
+
+    Map<Integer, Set<String>> scoreToPlayersMap;
+
+    LinkedList<Integer> topScores;
+
+    Set<Integer> scoresSet;
+
+    Map<String, Set<Integer>> playerToScoresMap;
+
+    Map<String, PlayerDetailsDto> playerTable;
+
+    @BeforeEach
+    public void setup(){
+        scoreToPlayersMap = new HashMap();
+        topScores = new LinkedList();
+        scoresSet = new HashSet();
+        playerTable = new HashMap<>();
+        playerToScoresMap = new HashMap<>();
+        ReflectionTestUtils.setField(playerService, "scoresSet", scoresSet);
+        ReflectionTestUtils.setField(playerService, "playerTable", playerTable);
+        ReflectionTestUtils.setField(playerService, "topScores", topScores);
+        ReflectionTestUtils.setField(playerService, "playerToScoresMap", playerToScoresMap);
+        ReflectionTestUtils.setField(playerService, "scoreToPlayersMap", scoreToPlayersMap);
+    }
+
+    @Test
+    public void resetPlayerTest() {
+        playerToScoresMap.put("player1", new HashSet<>(Arrays.asList(3,4)));
+        scoreToPlayersMap.put(3,new HashSet<>(Arrays.asList("player1")));
+        scoreToPlayersMap.put(4,new HashSet<>(Arrays.asList("player1")));
+        topScores.addAll(Arrays.asList(10,9,8,7,6));
+        playerService.resetPlayer("player1");
+        assertEquals(5, topScores.size());
+    }
+
+    @Test
+    public void resetPlayerTest_topScore() {
+        playerToScoresMap.put("player1", new HashSet<>(Arrays.asList(3,4)));
+        scoreToPlayersMap.put(3,new HashSet<>(Arrays.asList("player1")));
+        scoreToPlayersMap.put(4,new HashSet<>(Arrays.asList("player1", "player2")));
+        topScores.addAll(Arrays.asList(10,9,8,7,4));
+        playerService.resetPlayer("player1");
+        assertEquals(5, topScores.size());
+    }
+
+    @Test
+    public void resetPlayerTest_topUniqueScore() {
+        playerToScoresMap.put("player1", new HashSet<>(Arrays.asList(3,4)));
+        scoreToPlayersMap.put(3,new HashSet<>(Arrays.asList("player1")));
+        scoreToPlayersMap.put(4,new HashSet<>(Arrays.asList("player1")));
+        topScores.addAll(Arrays.asList(10,9,8,7,4));
+        playerService.resetPlayer("player1");
+        assertEquals(4, topScores.size());
+    }
+}
